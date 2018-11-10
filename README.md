@@ -1,21 +1,15 @@
 # CoreML-in-ARKit
-This simple project detects objects in Augmented Reality and displays 3D labels on top of them. This serves as a basic template for an ARKit project to use CoreML.
+This is an AR app made for great uni hack
 
-![image of scene with 3d labels on objects](post-media/giphy.gif)
-
-[Demo Video - on Youtube](https://www.youtube.com/watch?v=RjIbiAC8cBk)
 
 Model: Inception V3
 
 Language: Swift 4.0
 
-Written in: Xcode 9.0 GM (9A235) (Updated) ~~XCode 9 beta 3 (9M174d)~~
+Content Technology: ARKit,CoreML
 
-Content Technology: SceneKit
+Tested on iPhone 8 plus running iOS 12.0.1  
 
-Tested on iPhone 7 plus running iOS 11 beta 3 (15A5318g)
-
-Note: SceneKit can achieve a 60 FPS on iPhone7+ - though when it gets hot, it'll drop to 30 FPS.
 
 ## Instructions
 
@@ -35,7 +29,6 @@ If you're having issues, double check that the model is part of a target [(sourc
 
 - Whilst ARKit's FPS , is displayed - CoreML's speed is not. However, it does appear sufficiently fast for real-time ARKit applications.
 
-- Placement of the label is simply determined by the raycast screen centre-point to a ARKit feature-point. This could be altered for more stable placement.
 
 ## Building Blocks (Overview)
 
@@ -65,9 +58,3 @@ func loopCoreMLUpdate() {
     }
 }
 ```
-
-### Add 3D Text
-
-- Add a Tap Gesture.
-- On Tap. Get the raycast centre point, translating it to appropriate coordinates.
-- Render 3D text at that location. Use the most likely object.
