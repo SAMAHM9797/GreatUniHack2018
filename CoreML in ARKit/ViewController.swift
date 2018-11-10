@@ -23,7 +23,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     private let audioEngine = AVAudioEngine()
     
-    private var confirmationCatchPhrase = "Sudo Purchase"
+    private var confirmationCatchPhrase = "Treat yo self"
     
     
     // SCENE
