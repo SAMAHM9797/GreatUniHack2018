@@ -114,7 +114,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let transform : matrix_float4x4 = closestResult.worldTransform
             let worldCoord : SCNVector3 = SCNVector3Make(transform.columns.3.x, transform.columns.3.y, transform.columns.3.z)
             
-            // Create 3D Text
+            // Create item label
             let node : SCNNode = createRectangle(latestPrediction)
             sceneView.scene.rootNode.addChildNode(node)
             node.position = worldCoord
@@ -145,7 +145,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             plane.firstMaterial?.isDoubleSided = true
             plane.firstMaterial?.diffuse.contentsTransform =
                 SCNMatrix4Translate(SCNMatrix4MakeScale(1,-1, 1),0,1,0)
-            
+
+ 
             let planeNode = SCNNode(geometry: plane)
 
             let parentNode = SCNNode()
@@ -155,8 +156,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
            return parentNode
         
-     
-
     }
     func createNewBubbleParentNode(_ text : String) -> SCNNode {
         // Warning: Creating 3D Text is susceptible to crashing. To reduce chances of crashing; reduce number of polygons, letters, smoothness, etc.
