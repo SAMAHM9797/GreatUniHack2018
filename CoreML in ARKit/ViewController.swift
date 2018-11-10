@@ -121,48 +121,26 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func createProductInfoNode(_ text : String) -> SCNNode
-    {
-        let skScene = SKScene(size: CGSize(width: 50, height: 50))
-        skScene.backgroundColor = UIColor.clear
-        
-        let rectangle = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 50, height: 50), cornerRadius: 10)
-        rectangle.fillColor = #colorLiteral(red: 0.807843148708344, green: 0.0274509806185961, blue: 0.333333343267441, alpha: 1.0)
-        rectangle.strokeColor = #colorLiteral(red: 0.439215689897537, green: 0.0117647061124444, blue: 0.192156866192818, alpha: 1.0)
-        rectangle.lineWidth = 5
-        rectangle.alpha = 0.4
-        let labelNode = SKLabelNode(text: text)
-        labelNode.fontSize = 20
-        labelNode.fontName = "San Fransisco"
-        labelNode.position = CGPoint(x:100,y:100)
-        skScene.addChild(rectangle)
-        skScene.addChild(labelNode)
-        
-        let plane = SCNPlane(width: 20, height: 20)
-        let material = SCNMaterial()
-        material.isDoubleSided = true
-        material.diffuse.contents = skScene
-        plane.materials = [material]
-        let node = SCNNode(geometry: plane)
-        
-        let parentNode = SCNNode()
-        parentNode.addChildNode(node)
-        
-        return parentNode
-    }
+   
     
     func createRectangle(_ text : String) -> SCNNode {
         
+            let description = "this is a placeholder description , well atleast it works for now"
         
-
             let billboardConstraint = SCNBillboardConstraint()
             billboardConstraint.freeAxes = SCNBillboardAxis.Y
         
             let plane = SCNPlane(width: 0.1, height: 0.1)
         
-            
             let spriteKitScene = SKScene(fileNamed: "ProductInfo")
-            
+        
+     
+            let productNameLabel = spriteKitScene?.childNode(withName: "productName") as? SKLabelNode
+            productNameLabel?.text = text
+        
+            let productDescriptionLabel = spriteKitScene?.childNode(withName: "productDescription") as? SKLabelNode
+            productDescriptionLabel?.text = description
+    
             plane.firstMaterial?.diffuse.contents = spriteKitScene
             plane.firstMaterial?.isDoubleSided = true
             plane.firstMaterial?.diffuse.contentsTransform =
@@ -170,9 +148,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             
             let planeNode = SCNNode(geometry: plane)
 
-            planeNode.constraints = [billboardConstraint]
+            let parentNode = SCNNode()
+            parentNode.addChildNode(planeNode)
+            parentNode.constraints = [billboardConstraint]
         
-           return planeNode
+        
+           return parentNode
         
      
 
