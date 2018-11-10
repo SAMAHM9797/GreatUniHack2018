@@ -136,7 +136,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
      
             let productNameLabel = spriteKitScene?.childNode(withName: "productName") as? SKLabelNode
-            productNameLabel?.text = text
+            productNameLabel?.text =  text
         
             let productDescriptionLabel = spriteKitScene?.childNode(withName: "productDescription") as? SKLabelNode
             productDescriptionLabel?.text = description
@@ -170,7 +170,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         var font = UIFont(name: "Futura", size: 0.15)
         font = font?.withTraits(traits: .traitBold)
         bubble.font = font
-        bubble.alignmentMode = kCAAlignmentCenter
+        bubble.alignmentMode = convertFromCATextLayerAlignmentMode(CATextLayerAlignmentMode.center)
         bubble.firstMaterial?.diffuse.contents = UIColor.orange
         bubble.firstMaterial?.specular.contents = UIColor.white
         bubble.firstMaterial?.isDoubleSided = true
@@ -237,16 +237,24 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             print(classifications)
             print("--")
             
+  
+            //change to 1 to show all classifications
+            let debug = 0
+            
+            if(debug == 1){
             // Display Debug Text on screen
             var debugText:String = ""
             debugText += classifications
             self.debugTextView.text = debugText
-            
+            }
+            else {
             // Store the latest prediction
             var objectName:String = "…"
             objectName = classifications.components(separatedBy: "-")[0]
             objectName = objectName.components(separatedBy: ",")[0]
             self.latestPrediction = objectName
+            self.debugTextView.text = objectName
+            }
             
         }
     }
@@ -278,8 +286,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
 extension UIFont {
     // Based on: https://stackoverflow.com/questions/4713236/how-do-i-set-bold-and-italic-on-uilabel-of-iphone-ipad
-    func withTraits(traits:UIFontDescriptorSymbolicTraits...) -> UIFont {
-        let descriptor = self.fontDescriptor.withSymbolicTraits(UIFontDescriptorSymbolicTraits(traits))
+    func withTraits(traits:UIFontDescriptor.SymbolicTraits...) -> UIFont {
+        let descriptor = self.fontDescriptor.withSymbolicTraits(UIFontDescriptor.SymbolicTraits(traits))
         return UIFont(descriptor: descriptor!, size: 0)
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCATextLayerAlignmentMode(_ input: CATextLayerAlignmentMode) -> String {
+	return input.rawValue
 }
