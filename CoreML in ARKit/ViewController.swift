@@ -9,11 +9,21 @@
 import UIKit
 import SceneKit
 import ARKit
-
 import Vision
+import Speech
 
 class ViewController: UIViewController, ARSCNViewDelegate {
 
+    
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
+    
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    
+    private var recognitionTask: SFSpeechRecognitionTask?
+    
+    private let audioEngine = AVAudioEngine()
+    
+    
     // SCENE
     @IBOutlet var sceneView: ARSCNView!
     let bubbleDepth : Float = 0.01 // the 'depth' of 3D text
@@ -23,6 +33,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var visionRequests = [VNRequest]()
     let dispatchQueueML = DispatchQueue(label: "com.hw.dispatchqueueml") // A Serial Queue
     @IBOutlet weak var debugTextView: UITextView!
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,6 +73,82 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Begin Loop to Update CoreML
         loopCoreMLUpdate()
+    }
+    
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Configure the SFSpeechRecognizer object already
+        // stored in a local member variable.
+        
+        // Make the authorization request.
+        SFSpeechRecognizer.requestAuthorization { authStatus in
+            OperationQueue.main.addOperation {
+                switch authStatus {
+                case .authorized:
+                    print("speech authorized")
+                    
+                case .denied:
+                      print("speech denied")
+                    
+                case .restricted:
+                       print("speech restricted")
+                    
+                case .notDetermined:
+                      print("speech not determined")
+                }
+            }
+        }
+    }
+    
+    private func startRecording() throws {
+        
+        // Cancel the previous task if it's running.
+        if let recognitionTask = recognitionTask {
+            recognitionTask.cancel()
+            self.recognitionTask = nil
+        }
+        
+        // Configure the audio session for the app.
+        let audioSession = AVAudioSession.sharedInstance()
+        try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+        try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        let inputNode = audioEngine.inputNode
+        
+        // Create and configure the speech recognition request.
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
+        recognitionRequest.shouldReportPartialResults = true
+        
+        // Create a recognition task for the speech recognition session.
+        // Keep a reference to the task so that it can be canceled.
+        recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
+            var isFinal = false
+            
+            if let result = result {
+                // Update the text view with the results.
+                print(result.bestTranscription.formattedString)
+                isFinal = result.isFinal
+            }
+            
+            if error != nil || isFinal {
+                // Stop recognizing speech if there is a problem.
+                self.audioEngine.stop()
+                inputNode.removeTap(onBus: 0)
+                
+                
+            }
+        }
+        
+        // Configure the microphone input.
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+            self.recognitionRequest?.append(buffer)
+        }
+        
+        audioEngine.prepare()
+        try audioEngine.start()
+        
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -118,6 +206,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let node : SCNNode = createRectangle(latestPrediction)
             sceneView.scene.rootNode.addChildNode(node)
             node.position = worldCoord
+        }
+        
+         do {
+            try self.startRecording()
+        } catch  {
+            print("ohhh boi")
         }
     }
     
@@ -241,8 +335,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         DispatchQueue.main.async {
             // Print Classifications
-            print(classifications)
-            print("--")
+//            print(classifications)
+//            print("--")
             
   
             //change to 1 to show all classifications
