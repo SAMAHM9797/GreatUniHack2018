@@ -100,9 +100,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 }
             }
         }
+        
+        do {
+            try self.startRecording()
+        } catch  {
+            print("ohhh boi")
+        }
     }
     
     private func startRecording() throws {
+     
         
         // Cancel the previous task if it's running.
         if let recognitionTask = recognitionTask {
@@ -146,8 +153,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 // Stop recognizing speech if there is a problem.
                 self.audioEngine.stop()
                 inputNode.removeTap(onBus: 0)
-                
-                
             }
         }
         
@@ -220,11 +225,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             node.position = worldCoord
         }
         
-         do {
-            try self.startRecording()
-        } catch  {
-            print("ohhh boi")
-        }
+        
     }
     
    
