@@ -23,6 +23,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     private let audioEngine = AVAudioEngine()
     
+    private var confirmationCatchPhrase = "Sudo Purchase"
+    
     
     // SCENE
     @IBOutlet var sceneView: ARSCNView!
@@ -128,6 +130,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 // Update the text view with the results.
                 print(result.bestTranscription.formattedString)
                 isFinal = result.isFinal
+                
+                if(result.bestTranscription.formattedString == self.confirmationCatchPhrase) {
+                    
+                    let alert = UIAlertController(title: "Purchased", message: "Congrats you are now the new owner of ", preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: nil))
+                    alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+                    
+                    self.present(alert, animated: true)
+                }
             }
             
             if error != nil || isFinal {
@@ -314,6 +326,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
         
     }
+    
+    
     
     func classificationCompleteHandler(request: VNRequest, error: Error?) {
         // Catch Errors
