@@ -125,6 +125,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func createRectangle(_ text : String) -> SCNNode {
         
+            let stars = 3
+        
             let description = "this is a placeholder description , well atleast it works for now"
         
             let billboardConstraint = SCNBillboardConstraint()
@@ -141,6 +143,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let productDescriptionLabel = spriteKitScene?.childNode(withName: "productDescription") as? SKLabelNode
             productDescriptionLabel?.text = description
     
+            for i in (stars ... 5).reversed() {
+                let star = spriteKitScene?.childNode(withName: "Star\(i)" ) as? SKShapeNode
+                star?.isHidden = true
+            }
+        
+        
             plane.firstMaterial?.diffuse.contents = spriteKitScene
             plane.firstMaterial?.isDoubleSided = true
             plane.firstMaterial?.diffuse.contentsTransform =
