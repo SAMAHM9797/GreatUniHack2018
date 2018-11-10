@@ -232,7 +232,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func createRectangle(_ text : String) -> SCNNode {
         
-            let stars = 3
+            let stars = arc4random_uniform(5) + 2;
         
             let description = "this is a placeholder description , well atleast it works for now"
         
